@@ -1,1 +1,153 @@
-Hello World
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Pokémon</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #main-card {
+            background-color: #EA2027;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px;
+            max-width: 300px;
+            text-align: center;
+            padding: 20px;
+            transition: transform 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #main-card:hover {
+            transform: scale(1.05);
+        }
+
+        #poke-image {
+            max-width: 150px;
+            max-height: 150px;
+            margin-bottom: 10px;
+        }
+
+        #button-card {
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #FFC312;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .pokemon-history {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            color: #fff;
+        }
+
+        .pokemon-card {
+            background-color: #006266;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px;
+            max-width: 200px;
+            text-align: center;
+            padding: 10px;
+            transition: transform 0.3s;
+        }
+
+        .pokemon-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <h1>Consulta de Pokémon</h1>
+    <div id="main-card">
+        <div style="display: flex; background: lightblue; border-radius: 50%; width: 40px; height: 40px; margin-right: auto; margin-bottom: 10px; border-radius: 20px;">
+        </div>
+        <div style="background: #fff; width: 90%; ">
+            <img id="poke-image" src="" alt="">
+            <h2 id="poke-name"></h2>
+            <p id="poke-height"></p>
+            <p id="poke-weight"></p>
+        </div>
+        <div id="button-card">
+            <button onclick="buscarPokemon()">Busca tu Pokémon</button>
+        </div>
+    </div>
+
+    <div class="pokemon-history" id="pokemon-history"></div>
+
+    <script>
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error al obtener los datos:', error);
+            }
+        }
+
+        function mostrarPokemon(pokemon) {
+            document.getElementById('poke-name').innerText = pokemon.name;
+            document.getElementById('poke-image').src = pokemon.sprites.front_default;
+            document.getElementById('poke-height').innerText = `Altura: ${pokemon.height} dm`;
+            document.getElementById('poke-weight').innerText = `Peso: ${pokemon.weight / 10} kg`;
+        }
+
+        function agregarHistorial(pokemon) {
+            const historyContainer = document.getElementById('pokemon-history');
+
+            const card = document.createElement('div');
+            card.className = 'pokemon-card';
+
+            card.innerHTML = `
+                <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+                <h3>${pokemon.name}</h3>
+                <p>Altura: ${pokemon.height} dm</p>
+                <p>Peso: ${pokemon.weight / 10} kg</p>
+            `;
+
+            historyContainer.appendChild(card);
+        }
+
+        async function buscarPokemon() {
+            const pokemonId = Math.floor(Math.random() * 898) + 1;
+            const apiUrl = `https://pokeapi.co/api/v2/pokemon/${pokemonId}/`;
+            const pokemonData = await fetchData(apiUrl);
+            mostrarPokemon(pokemonData);
+            agregarHistorial(pokemonData);
+        }
+    </script>
+</body>
+</html>
